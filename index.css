@@ -82,6 +82,15 @@ svg {
   fill: white;
 }
 
+#tooltip {
+  padding: 5px;
+  background: hsla(0, 0%, 0%, 0.8);
+  border-radius: 10px;
+}
+#tooltip span {
+  display: block;
+}
+
 /* .svg-content {
   display: inline-block;
   position: absolute;

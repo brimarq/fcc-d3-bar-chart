@@ -1,27 +1,29 @@
 let json, req = new XMLHttpRequest();
 
+const tooltip = d3.select("body")
+  .append("div")
+  .attr("id", "tooltip")
+  // .attr("data-date", "")
+  // .attr("data-gdp", "")
+  .style("position", "absolute")
+  .style("z-index", "10")
+  .style("visibility", "hidden")
+  .each( function() {
+    d3.select(this).append("span").attr("id", "date");
+    d3.select(this).append("span").attr("id", "gdp");
+  })
+;
+
 req.open("GET",'https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/GDP-data.json',true);
 req.send();
 req.onload = function() {
   json = JSON.parse(req.responseText);
   console.log(d3.extent(json.data, (d) => d[0]));
   console.log(d3.extent(json.data, (d) => d[1]));
-  console.log(json.data.length);
-  console.log((json.data.length / 4) - 1);
-  const years = json.data.map(d => d[0].slice(0, 4));
-  
-  console.log(d3.timeYear.range("1947", "2015", 2));
   
   drawSvg();
 };
 
-// const w = 500;
-// const h = 500;
-
-// const svg = d3.select("main")
-//   .append("svg")
-//   .attr("width", w)
-//   .attr("height", h);
 
 function drawSvg() {
   
@@ -56,11 +58,13 @@ function drawSvg() {
     // .attr("height", h)
     .classed("svg-content", true);
 
+  
+
   svg.selectAll("rect")
     .data(json.data)
     .enter()
     .append("rect")
-    .classed("bar", true)
+    .attr("class", "bar")
     .attr("x", (d, i) => (padding + (i * barWidth)))
     .attr("y", (d) => yScale(d[1]))
     .attr("width", barWidth)
@@ -70,12 +74,55 @@ function drawSvg() {
     .attr("fill", "green");
 
   svg.append("g")
+    .attr("id", "x-axis")
     .attr("transform", "translate(0," + (h - padding) + ")")
     .call(xAxis);
 
   svg.append("g")
+    .attr("id", "y-axis")
     .attr("transform", "translate(" + padding + ", 0)")
     .call(yAxis);
+
+  svg.selectAll(".bar")
+    .on("mouseover", function(d) {
+      tooltip
+        .style("visibility", "visible")
+        .attr("data-date", d[0])
+        .attr("data-gdp", d[1])
+        .selectAll("span")
+        .each(function() {
+          d3.select("#date").text(function() {
+            const year = d[0].slice(0, 4);
+            const mo = d[0].slice(5, 7);
+            switch (mo) {
+              case '01': return year + " Q1";
+              case '04': return year + " Q2";
+              case '07': return year + " Q3";
+              case '10': return year + " Q4";
+              default: return "";
+            }
+          })
+          d3.select("#gdp").text(function() {
+            return "$" + d[1] + " B"
+          })
+        });
+    })
+    .on("mousemove", function(d) { 
+      const year = d[0].slice(0,4);
+      tooltip
+        .style("top", (d3.event.pageY - 50) + "px")
+        .style("left", (d3.event.pageX + 20) + "px");
+        // .style("left", function() {
+        //   if (+year < 1982) {
+        //     return (d3.event.pageX+10) + "px";
+        //   } else {
+        //     return (d3.event.pageX-150) + "px";
+        //   }
+        // });
+    })
+    .on("mouseout", function() {
+      tooltip.style("visibility", "hidden");
+    });
   
 }
 
