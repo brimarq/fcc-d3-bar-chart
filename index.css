@@ -53,10 +53,7 @@ footer {
   border: 1px solid yellow;
 }
 
-svg {
-  border: 1px solid red;
-  background: linear-gradient(#222, #555);
-}
+
 
 .svg-container {
   display: inline-block;
@@ -68,14 +65,20 @@ svg {
   /* padding-bottom: 100%; */
   /* vertical-align: top;
   overflow: hidden; */
+  user-select: none;
 }
 
-#timer-display {
+#title {
   position: absolute;
-  top: 50%; 
-  left: 50%; 
-  transform: translate(-50%, -50%);
-  padding: 5px 10px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  z-index: 5;
+  top: 0;
+}
+
+svg {
+  border: 1px solid red;
+  background: linear-gradient(#222, #555);
 }
 
 .bar:hover {
