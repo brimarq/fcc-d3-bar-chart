@@ -27,39 +27,59 @@ req.onload = function() {
 
 function drawSvg() {
   
-  const h = 500;
+  // Set initial svg dimensions to 16:10 ratio
+  const h = 400;
   const w = h * 1.6;
-  const padding = h * .05;
+
+  // Set padding for svg element
+  const padding = h * .1;
+
+
   const vbXmin = padding * -1;
   const vbYmin = padding * -1;
   const vbWidth = w + padding;
   const vbHeight = h + padding;
   const barWidth = (w - padding * 2) / json.data.length;
 
-  const dates = json.data.map(d => new Date(d[0]));
+  // const dates = json.data.map(d => new Date(d[0]));
   // console.log(dates);
   
+  // Set the scales for x and y axes
   const xScale = d3.scaleTime()
     .domain([new Date(json.from_date), new Date(json.to_date)])
     .range([padding, w - padding]);
-
   const yScale = d3.scaleLinear()
     .domain([0, d3.max(json.data, (d) => d[1])])
     .range([h - padding, padding]); // keeps the plot right-side-up 
-
   const xAxis = d3.axisBottom(xScale);
   const yAxis = d3.axisLeft(yScale);
 
+  // Create the svg viewBox
   const svg = d3.select("div#container")
     .append("svg")
     // .attr("preserveAspectRatio", "xMinYMin meet")
     .attr("viewBox", vbXmin + " " + vbYmin + " " + vbWidth + " " + vbHeight)
     // .attr("width", w)
     // .attr("height", h)
-    .classed("svg-content", true);
+    .attr("class", "svg-content");
 
-  
+  svg.append("text")
+    
+    .style("text-anchor", "middle")
+    .text("United States GDP");
 
+  svg.append("defs").html(
+    '<linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">' + 
+      '<stop offset="0%" style="stop-color:hsl(120, 100%, 45%);stop-opacity:1" />' + 
+      '<stop offset="100%" style="stop-color:hsl(120, 100%, 35%);stop-opacity:1" />' + 
+    '</linearGradient>' + 
+    '<linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">' + 
+      '<stop offset="0%" style="stop-color:hsl(120, 100%, 85%);stop-opacity:1" />' + 
+      '<stop offset="100%" style="stop-color:hsl(120, 100%, 90%);stop-opacity:1" />' + 
+    '</linearGradient>'
+  );
+
+  // Create bars from json data
   svg.selectAll("rect")
     .data(json.data)
     .enter()
@@ -71,13 +91,14 @@ function drawSvg() {
     .attr("height", (d) => (h - padding) - yScale(d[1]))
     .attr("data-date", (d) => d[0])
     .attr("data-gdp", (d) => d[1])
-    .attr("fill", "green");
+    .attr("fill", "url(#grad1)");
 
+  // x-axis 
   svg.append("g")
     .attr("id", "x-axis")
     .attr("transform", "translate(0," + (h - padding) + ")")
     .call(xAxis);
-
+  // y-axis
   svg.append("g")
     .attr("id", "y-axis")
     .attr("transform", "translate(" + padding + ", 0)")
@@ -85,6 +106,7 @@ function drawSvg() {
 
   svg.selectAll(".bar")
     .on("mouseover", function(d) {
+      d3.select(this).attr("fill", "url(#grad2)");
       tooltip
         .style("visibility", "visible")
         .attr("data-date", d[0])
@@ -103,7 +125,7 @@ function drawSvg() {
             }
           })
           d3.select("#gdp").text(function() {
-            return "$" + d[1] + " B"
+            return d3.format(" $,.6~r")(d[1]) + " B";
           })
         });
     })
@@ -121,6 +143,7 @@ function drawSvg() {
         // });
     })
     .on("mouseout", function() {
+      d3.select(this).attr("fill", "url(#grad1)");
       tooltip.style("visibility", "hidden");
     });
   
