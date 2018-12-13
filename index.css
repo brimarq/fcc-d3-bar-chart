@@ -89,6 +89,9 @@ svg {
   box-shadow: 10px 10px 20px -10px #000;
 }
 
+svg#bar-chart {
+  border: 1px solid blue;
+}
 
 #tooltip {
   padding: 5px;
