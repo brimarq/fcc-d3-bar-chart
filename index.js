@@ -28,7 +28,7 @@ req.onload = function() {
 function drawSvg() {
   
   // Set initial svg dimensions to 16:10 ratio
-  const h = 500;
+  const h = 400;
   const w = h * 1.6;
 
 
@@ -76,13 +76,14 @@ function drawSvg() {
       let w = this.getBBox().width;
       if (w > yAxisMaxTickW) yAxisMaxTickW = w;
     });
+
   tempSvg.remove();
   
   console.log(yAxisMaxTickW);
   console.log(xAxisMaxTickH);
 
   /** Set "margins" for viewBox area outside of chart */
-  const marginSize = 0.05;
+  const marginSize = 0.1;
   const margin = {
     top: h * marginSize,
     right: h * marginSize,
@@ -112,7 +113,7 @@ function drawSvg() {
   
 
   
-  // Create the svg viewBox
+  /** Create the svg viewBox */ 
   const svg = d3.select("div#container")
     .append("svg")
     // .attr("preserveAspectRatio", "xMinYMin meet")
@@ -121,19 +122,46 @@ function drawSvg() {
     // .attr("height", h)
     .attr("class", "svg-content");
 
-  
 
-  svg.append("defs").html(
-    '<linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">' + 
-      '<stop offset="0%" style="stop-color:hsl(120, 100%, 45%);stop-opacity:1" />' + 
-      '<stop offset="100%" style="stop-color:hsl(120, 100%, 35%);stop-opacity:1" />' + 
-    '</linearGradient>' + 
-    '<linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">' + 
-      '<stop offset="0%" style="stop-color:hsl(120, 100%, 85%);stop-opacity:1" />' + 
-      '<stop offset="100%" style="stop-color:hsl(120, 100%, 90%);stop-opacity:1" />' + 
-    '</linearGradient>'
-  );
+  /** Create defs */
+  const defs = svg.append("defs");
+
+  // linearGradients for bars
+  defs.append("linearGradient")
+    .attr("id", "grad1")
+    .attr("x1", "0%")
+    .attr("y1", "0%")
+    .attr("x2", "0%")
+    .attr("y2", "100%")
+    .each( function() {
+      d3.select(this).append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", "hsl(120, 100%, 45%)")
+        .attr("stop-opacity", "1"),
+      d3.select(this).append("stop")
+        .attr("offset", "100%")
+        .attr("stop-color", "hsl(120, 100%, 35%)")
+        .attr("stop-opacity", "1")
+    });
+
+    defs.append("linearGradient")
+    .attr("id", "grad2")
+    .attr("x1", "0%")
+    .attr("y1", "0%")
+    .attr("x2", "0%")
+    .attr("y2", "100%")
+    .each( function() {
+      d3.select(this).append("stop")
+        .attr("offset", "0%")
+        .attr("stop-color", "hsl(120, 100%, 85%)")
+        .attr("stop-opacity", "1"),
+      d3.select(this).append("stop")
+        .attr("offset", "100%")
+        .attr("stop-color", "hsl(120, 100%, 90%)")
+        .attr("stop-opacity", "1")
+    });
   
+  /** Chart title text */
   svg.append("text")
     .attr("x", chartXmid)
     .style("text-anchor", "middle")
