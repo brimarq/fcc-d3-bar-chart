@@ -143,14 +143,15 @@ function drawSvg() {
     .attr("transform", "translate(" + (margin.left + yAxisMaxTickW) + "," + margin.top + ")");
   
   // Temp outline for bar chart
-  barChart.append("rect")
-    .attr("x", 0)
-    .attr("y", 0)
-    .attr("width", width)
-    .attr("height", height)
-    .attr("stroke", "blue")
-    .attr("stroke-weight", "2")
-    .attr("fill", "none");
+  barChart.style("outline", "1px solid blue");
+  // barChart.getBBox()
+  //   // .attr("x", 0)
+  //   // .attr("y", 0)
+  //   // .attr("width", width)
+  //   // .attr("height", height)
+  //   .attr("stroke", "blue")
+  //   .attr("stroke-weight", "2")
+  //   .attr("fill", "none");
 
   /** Chart title text */
   barChart.append("text")
