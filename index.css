@@ -57,21 +57,23 @@ footer {
   border: 1px solid yellow;
 }
 
-
-
-.svg-container {
-  display: inline-block;
-  position: relative;
-  /* top: 50%; 
-  left: 50%; 
-  transform: translate(-50%, -50%); */
-  /* min-height: 0; */
-  width: 75%;
-  /* padding-bottom: 100%; */
-  /* vertical-align: middle; */
-  overflow: hidden;
+div#svg-container {
+  /* position: relative;
+  height: 0;
+  width: 100%;
+  padding: 0;
+  padding-bottom: 100%; */
   user-select: none;
 }
+
+/* #svg-content {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+} */
+
 
 #title {
   position: absolute;
@@ -90,23 +92,17 @@ svg {
   box-shadow: 10px 10px 20px -10px #000;
 }
 
-svg#bar-chart {
-  border: 1px solid blue;
-}
 
 #tooltip {
   padding: 5px;
   background: hsla(0, 0%, 0%, 0.8);
   border-radius: 10px;
 }
+
 #tooltip span {
   display: block;
 }
 
-/* .svg-content {
-  display: inline-block;
-  position: absolute;
-  top: 0;
-  left: 0;
-} */
+
+
 
