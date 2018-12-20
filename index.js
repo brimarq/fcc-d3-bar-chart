@@ -1,10 +1,9 @@
 let json, req = new XMLHttpRequest();
 
+/** Create hidden tooltip div */
 const tooltip = d3.select("body")
   .append("div")
   .attr("id", "tooltip")
-  // .attr("data-date", "")
-  // .attr("data-gdp", "")
   .style("position", "absolute")
   .style("z-index", "10")
   .style("visibility", "hidden")
@@ -14,25 +13,24 @@ const tooltip = d3.select("body")
   })
 ;
 
+/** Send http req */
 req.open("GET",'https://raw.githubusercontent.com/freeCodeCamp/ProjectReferenceData/master/GDP-data.json',true);
 req.send();
 req.onload = function() {
   json = JSON.parse(req.responseText);
-  console.log(d3.extent(json.data, (d) => d[0]));
-  console.log(d3.extent(json.data, (d) => d[1]));
-  
   drawSvg();
 };
 
-
 function drawSvg() {
   
-  // Set initial svg dimensions to 16:10 ratio
+  /** Set initial svg dimensions to 16:10 ratio */
   const w = 800;
   const h = w / 1.6;
 
+  /** Set "margins" for the chart */
   const margin = {top: h * .1, right: w * .07, bottom: h * .1, left: w * .06};
 
+  /** Set width and height for the chart */
   const width = w - margin.left - margin.right;
   const height = h - margin.top - margin.bottom;
 
@@ -49,17 +47,15 @@ function drawSvg() {
     .range([height, 0]) // keeps the plot right-side-up 
   ; 
   
+  /** Axes to be called */
   const xAxis = d3.axisBottom(xScale);
   const yAxis = d3.axisLeft(yScale);
   
-  
+  /** Create svg element */
   const svg = d3.select("main div#svg-container")
-    // .style("padding-bottom", (100 * (h / w) + "%"))
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
-    // .attr("id", "svg-content")
-    // .attr("viewBox", "0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom))
   ;
 
   /** Create svg defs */
@@ -182,58 +178,18 @@ function drawSvg() {
     d3.select("g#y-axis").each(function() {
       data.yAxisWidth = d3.format(".2~f")(this.getBBox().width)
     });
-    data.titleX = Math.round((width / 2) - (data.yAxisWidth / 2));
     d3.select(this).datum(data);
-    console.log(data);
   });
-  
-  /** Insert barChart title text before the first rect, so that it inherits data from barChart */
-  // barChart.insert("text", "rect")
-  //   .attr("id", "title")
-  //   .attr("x", function(d) {return d.titleX})
-  //   .attr("y", -10)
-  //   .style("text-anchor", "middle")
-  //   .style("font-size", "1.25em")
-  //   .style("font-weight", "bold")
-  //   .text("United States Gross Domestic Product")
-  //   .append("tspan")
-  //   .attr("x", function(d) {return d.titleX})
-  //   .attr("dy", 20)
-  //   .style("font-weight", "normal")
-  //   .style("font-size", "0.7em")
-  //   .text("Quarterly, 1947 - 2015 Q3")
-  // ;
 
   /** Center the barChart group in the svg */
   barChart.attr("transform", function(d) {
-    // let newX = d3.format(".2~f")((w - d.bboxWidth) / 2);
     let bboxWDiff = d.bboxWidth - width;
     let bboxHDiff = d.bboxHeight - height;
     let newX = Math.round(margin.left + (bboxWDiff / 2));
     let newY = Math.round(margin.top + (bboxHDiff / 2) - (d.xAxisHeight / 2));
-    console.log(bboxHDiff);
-    console.log([newX, newY]);
     return "translate(" + newX + "," + newY + ")"
   });
 
-
-
-
-  // barChartTitle.attr("transform", function() {
-  //   // let newX = d3.format(".2~f")((w - d.bboxWidth) / 2);
-  //   // let yAxisWidth = d3.select("g#y-axis").each(function() {return d3.format(".2~f")(this.getBBox().width)});
-
-  //   let yAxisWidth = d3.select("g#y-axis").getBBox().width;
-    
-  //   let newX = Math.round((width / 2) - (yAxisWidth / 2));
-  //   let newY = 0;
-  //   console.log(yAxisWidth);
-  //   console.log([newX, newY]);
-  //   return "translate(" + newX + "," + newY + ")";
-  // });
-
-
-  // console.log(function(d) { return barChart.width; });
   /** Hover effects for bar fill and tooltip */
   barChart.selectAll(".bar")
     .on("mouseover", function(d) {
@@ -268,6 +224,7 @@ function drawSvg() {
     .on("mouseout", function() {
       d3.select(this).attr("fill", "url(#grad1)");
       tooltip.style("visibility", "hidden");
-    });
+    })
+  ;
   
 }
