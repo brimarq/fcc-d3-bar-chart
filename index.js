@@ -31,7 +31,7 @@ function drawSvg() {
   const w = 800;
   const h = w / 1.6;
 
-  const margin = {top: 20, right: 10, bottom: 20, left: 10};
+  const margin = {top: h * .1, right: w * .07, bottom: h * .1, left: w * .06};
 
   const width = w - margin.left - margin.right;
   const height = h - margin.top - margin.bottom;
@@ -42,66 +42,28 @@ function drawSvg() {
   /** Set the scales for x and y axes */
   const xScale = d3.scaleTime()
     .domain([new Date(json.from_date), new Date(json.to_date)])
-    .range([0 , width]);
+    .range([0 , width])
+  ;
   const yScale = d3.scaleLinear()
     .domain([0, d3.max(json.data, (d) => d[1])])
     .range([height, 0]) // keeps the plot right-side-up 
-    ; 
+  ; 
   
   const xAxis = d3.axisBottom(xScale);
-  const yAxis = d3.axisLeft(yScale).tickFormat(d3.format("$,"));
-
-  /** Create hidden temp svg to capture axis tick sizes, then remove it */
-  let xAxisMaxTickH = 0;
-  let yAxisMaxTickW = 0;
-  const tempSvg = d3.select("div#svg-container")
-    .append("svg")
-    .attr("width", width)
-    .attr("height", height)
-    .style("visibility", "hidden")
-    ;
+  const yAxis = d3.axisLeft(yScale);
   
-   // temp x-axis 
-  tempSvg.append("g")
-    .attr("id", "x-axis-temp")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis);
-  // temp y-axis
-  tempSvg.append("g")
-    .attr("id", "y-axis-temp")
-    .attr("transform", "translate(0, 0)")
-    .call(yAxis);
-    
-  d3.select("g#x-axis-temp")
-    .selectAll(".tick")
-    .each(function(d) {
-      let xTickH = Math.ceil(this.getBBox().height);
-      if (xTickH > xAxisMaxTickH) xAxisMaxTickH = xTickH;
-    });
-  
-  d3.select("g#y-axis-temp")
-    .selectAll(".tick")
-    .each(function(d) {
-      let yTickW = Math.ceil(this.getBBox().width);
-      if (yTickW > yAxisMaxTickW) yAxisMaxTickW = yTickW;
-    });
-
-  tempSvg.remove();
-  
-  console.log(yAxisMaxTickW);
-  console.log(xAxisMaxTickH);
   
   const svg = d3.select("main div#svg-container")
     // .style("padding-bottom", (100 * (h / w) + "%"))
     .append("svg")
-    .attr("width", width + margin.left + margin.right + yAxisMaxTickW)
-    .attr("height", height + margin.top + margin.bottom + xAxisMaxTickH)
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
     // .attr("id", "svg-content")
     // .attr("viewBox", "0 0 " + (width + margin.left + margin.right) + " " + (height + margin.top + margin.bottom))
-    ;
+  ;
 
   /** Create svg defs */
-  const defs = svg.append("defs");
+  const defs = d3.select("svg").append("defs");
 
   // linearGradients for bars
   defs.append("linearGradient")
@@ -119,7 +81,8 @@ function drawSvg() {
         .attr("offset", "100%")
         .attr("stop-color", "hsl(120, 100%, 35%)")
         .attr("stop-opacity", "1")
-    });
+    })
+  ;
 
   defs.append("linearGradient")
     .attr("id", "grad2")
@@ -136,30 +99,34 @@ function drawSvg() {
         .attr("offset", "100%")
         .attr("stop-color", "hsl(120, 100%, 90%)")
         .attr("stop-opacity", "1")
-    });
+    })
+  ;
+
+  /** Chart title text */
+  svg.append("text")
+    .attr("id", "title")
+    .attr("x", (w / 2))
+    .attr("y", margin.top / 4 * 3)
+    .attr("fill", "#222")
+    .style("text-anchor", "middle")
+    .style("font-size", "1.25em")
+    .style("font-weight", "bold")
+    .text("United States Gross Domestic Product")
+    .append("tspan")
+    .attr("x", (w / 2))
+    .attr("dy", 20)
+    .attr("fill", "#222")
+    .style("font-weight", "normal")
+    .style("font-size", "0.7em")
+    .text("Quarterly, 1947 - 2015 Q3")
+  ;
 
   const barChart = svg.append("g")
     .attr("id", "bar-chart")
-    .attr("transform", "translate(" + (margin.left + yAxisMaxTickW) + "," + margin.top + ")");
+  ;
   
   // Temp outline for bar chart
-  barChart.style("outline", "1px solid blue");
-  // barChart.getBBox()
-  //   // .attr("x", 0)
-  //   // .attr("y", 0)
-  //   // .attr("width", width)
-  //   // .attr("height", height)
-  //   .attr("stroke", "blue")
-  //   .attr("stroke-weight", "2")
-  //   .attr("fill", "none");
-
-  /** Chart title text */
-  barChart.append("text")
-    .attr("x", (width / 2) - (yAxisMaxTickW / 2))
-    .attr("y", 12)
-    .style("text-anchor", "middle")
-    .style("font-weight", "bold")
-    .text("United States Gross Domestic Product (1947 Q1 - 2015 Q3)");
+  // barChart.style("outline", "1px solid yellow");
 
   /** Create bars from json data */
   barChart.selectAll("rect")
@@ -173,30 +140,100 @@ function drawSvg() {
     .attr("height", (d) => height - yScale(d[1]))
     .attr("data-date", (d) => d[0])
     .attr("data-gdp", (d) => d[1])
-    .attr("fill", "url(#grad1)");
+    .attr("fill", "url(#grad1)")
+  ;
 
-  // x-axis 
+  /** Create barChart axes */
+  // barChart x-axis 
   barChart.append("g")
     .attr("id", "x-axis")
     .attr("transform", "translate(0," + height + ")")
-    .call(xAxis);
-  // y-axis
+    .call(xAxis)
+  ;
+
+  // barChart y-axis
   barChart.append("g")
     .attr("id", "y-axis")
     .attr("transform", "translate(0, 0)")
-    .call(yAxis);
-  // y-axis label
+    .call(yAxis)
+  ;
+
+  // barChart y-axis label
   barChart.append("text")
     .attr("x", 25)
     .attr("y", height / 2 )
     .style("text-anchor", "middle")
-    .text("GDP in Billions")
+    .text("GDP in Billions of Dollars")
     .attr("transform", function(d) { 
       const x = d3.select(this).attr("x");
       const y = d3.select(this).attr("y");
       return "rotate(-90 " + x + " " + y + ")"
-    });
+    })
+  ;
 
+  /** Now, get barChart bbox dimensions and bind data to barChart */
+  barChart.each(function() {
+    let data = {};
+    data.bboxWidth = d3.format(".2~f")(this.getBBox().width);
+    data.bboxHeight = d3.format(".2~f")(this.getBBox().height);
+    d3.select("g#x-axis").each(function() {
+      data.xAxisHeight = d3.format(".2~f")(this.getBBox().height)
+    });
+    d3.select("g#y-axis").each(function() {
+      data.yAxisWidth = d3.format(".2~f")(this.getBBox().width)
+    });
+    data.titleX = Math.round((width / 2) - (data.yAxisWidth / 2));
+    d3.select(this).datum(data);
+    console.log(data);
+  });
+  
+  /** Insert barChart title text before the first rect, so that it inherits data from barChart */
+  // barChart.insert("text", "rect")
+  //   .attr("id", "title")
+  //   .attr("x", function(d) {return d.titleX})
+  //   .attr("y", -10)
+  //   .style("text-anchor", "middle")
+  //   .style("font-size", "1.25em")
+  //   .style("font-weight", "bold")
+  //   .text("United States Gross Domestic Product")
+  //   .append("tspan")
+  //   .attr("x", function(d) {return d.titleX})
+  //   .attr("dy", 20)
+  //   .style("font-weight", "normal")
+  //   .style("font-size", "0.7em")
+  //   .text("Quarterly, 1947 - 2015 Q3")
+  // ;
+
+  /** Center the barChart group in the svg */
+  barChart.attr("transform", function(d) {
+    // let newX = d3.format(".2~f")((w - d.bboxWidth) / 2);
+    let bboxWDiff = d.bboxWidth - width;
+    let bboxHDiff = d.bboxHeight - height;
+    let newX = Math.round(margin.left + (bboxWDiff / 2));
+    let newY = Math.round(margin.top + (bboxHDiff / 2) - (d.xAxisHeight / 2));
+    console.log(bboxHDiff);
+    console.log([newX, newY]);
+    return "translate(" + newX + "," + newY + ")"
+  });
+
+
+
+
+  // barChartTitle.attr("transform", function() {
+  //   // let newX = d3.format(".2~f")((w - d.bboxWidth) / 2);
+  //   // let yAxisWidth = d3.select("g#y-axis").each(function() {return d3.format(".2~f")(this.getBBox().width)});
+
+  //   let yAxisWidth = d3.select("g#y-axis").getBBox().width;
+    
+  //   let newX = Math.round((width / 2) - (yAxisWidth / 2));
+  //   let newY = 0;
+  //   console.log(yAxisWidth);
+  //   console.log([newX, newY]);
+  //   return "translate(" + newX + "," + newY + ")";
+  // });
+
+
+  // console.log(function(d) { return barChart.width; });
   /** Hover effects for bar fill and tooltip */
   barChart.selectAll(".bar")
     .on("mouseover", function(d) {

@@ -12,19 +12,8 @@ body {
   font-family: Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* background: linear-gradient(0deg, hsl(120, 8%, 70%), hsl(120, 8%, 85%));  */
   background: linear-gradient(hsl(30, 15%, 90%), hsl(30, 15%, 60%));
-
-  
-  /* background: 
-    -webkit-linear-gradient(45deg, hsla(0, 0%, 100%, 0) 15%, hsla(120, 80%, 100%, .1) 50%, hsla(0, 0%, 100%, 0) 80%), 
-    -webkit-linear-gradient(hsla(0, 0%, 10%, 1), hsla(0, 0%, 20%, 1)); 
-  background: 
-    linear-gradient(45deg, hsla(0, 0%, 100%, 0) 15%, hsla(120, 80%, 100%, .1) 50%, hsla(0, 0%, 100%, 0) 80%), 
-    linear-gradient(hsla(0, 0%, 10%, 1), hsla(0, 0%, 20%, 1)); */
-  /* background-repeat: no-repeat;  */
-  
-  color: #ddd;
+  color: #222;
   min-height: 100vh;
   box-sizing: border-box;
   border: 1px solid lime;
@@ -74,29 +63,19 @@ div#svg-container {
   top: 0;
 } */
 
-
-#title {
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%, 0);
-  z-index: 5;
-  top: 0;
-}
-
 svg {
-  color: black;
-  border: 1px solid red;
   border-radius: 8px;
-  /* background: linear-gradient(#222, #555); */
   background: #fefefe;
   box-shadow: 10px 10px 20px -10px #000;
 }
 
-
 #tooltip {
-  padding: 5px;
+  color: #fefefe;
+  padding: 10px;
   background: hsla(0, 0%, 0%, 0.8);
   border-radius: 10px;
+  width: 90px;
+  height: 35px;
 }
 
 #tooltip span {
