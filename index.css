@@ -15,8 +15,8 @@ body {
   background: linear-gradient(hsl(30, 15%, 90%), hsl(30, 15%, 60%));
   color: #222;
   min-height: 100vh;
-  box-sizing: border-box;
-  border: 1px solid lime;
+  /* box-sizing: border-box; */
+  /* border: 1px solid lime; */
 }
 
 header {
@@ -24,8 +24,8 @@ header {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  box-sizing: border-box;
-  border: 1px solid aqua;
+  /* box-sizing: border-box; */
+  /* border: 1px solid aqua; */
 }
 
 main {
@@ -41,9 +41,9 @@ footer {
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  height: 20px;
-  box-sizing: border-box;
-  border: 1px solid yellow;
+  /* height: 20px; */
+  /* box-sizing: border-box; */
+  /* border: 1px solid yellow; */
 }
 
 div#svg-container {
